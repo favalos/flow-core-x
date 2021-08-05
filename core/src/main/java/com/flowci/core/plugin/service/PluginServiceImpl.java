@@ -41,6 +41,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -193,9 +194,14 @@ public class PluginServiceImpl implements PluginService {
 
     @Override
     public List<PluginRepoInfo> load(String repoUrl) {
+        return load(repoUrl, null);
+    }
+
+    @Override
+    public List<PluginRepoInfo> load(String repoUrl, String token) {
         try {
             repoUrl = repoUrl + "?t=" + Instant.now().toEpochMilli();
-            String body = httpManager.get(repoUrl);
+            String body = httpManager.get(repoUrl, token);
             return objectMapper.readValue(body, RepoListType);
         } catch (Throwable e) {
             log.warn("Unable to load plugin repo '{}' : {}", repoUrl, e.getMessage());
@@ -227,7 +233,10 @@ public class PluginServiceImpl implements PluginService {
             pluginDao.deleteAll();
 
             String repoUrl = pluginProperties.getDefaultRepo();
-            List<PluginRepoInfo> repos = load(repoUrl);
+            String token = pluginProperties.getToken();
+
+            List<PluginRepoInfo> repos = load(repoUrl, token);
+
             clone(repos);
         }
     }

@@ -74,6 +74,11 @@ public interface PluginService {
     List<PluginRepoInfo> load(String repoUrl);
 
     /**
+     * Load private plugin repo info
+     */
+    List<PluginRepoInfo> load(String repoUrl, String token);
+
+    /**
      * Git clone plugin repos in Async
      */
     void clone(List<PluginRepoInfo> repos);

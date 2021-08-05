@@ -121,6 +121,8 @@ public class AppProperties {
         private String defaultRepo;
 
         private Boolean autoUpdate;
+
+        private String token;
     }
 
     @Data

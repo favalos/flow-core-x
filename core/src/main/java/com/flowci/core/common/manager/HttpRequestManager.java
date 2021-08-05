@@ -7,9 +7,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Locale;
 
 @Component("httpManager")
 public class HttpRequestManager {
@@ -31,8 +33,16 @@ public class HttpRequestManager {
     }
 
     public String get(String url) throws IOException {
+        return get(url, null);
+    }
+
+    public String get(String url, String token) throws IOException {
         HttpGet request = new HttpGet(url);
         request.setHeader("User-Agent", DefaultUserAgent);
+
+        if(!StringUtils.isEmpty(token)) {
+            request.setHeader("Authorization", "Bearer " + token.trim());
+        }
 
         HttpResponse execute = client.execute(request);
         return EntityUtils.toString(execute.getEntity());
